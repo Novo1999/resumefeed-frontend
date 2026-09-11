@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/supabase/server';
+import { toProfile } from '@/lib/profile/user';
 import { Button } from '@/components/ui/button';
 import { UserMenu } from '@/components/auth/user-menu';
 import { Brand } from '@/components/brand';
@@ -10,10 +11,7 @@ import { Brand } from '@/components/brand';
  */
 export async function SiteHeader() {
   const user = await getCurrentUser();
-  const fullName =
-    typeof user?.user_metadata?.full_name === 'string'
-      ? user.user_metadata.full_name
-      : undefined;
+  const profile = user ? toProfile(user) : null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
@@ -21,8 +19,12 @@ export async function SiteHeader() {
         <Brand />
 
         <nav className="flex items-center gap-2">
-          {user ? (
-            <UserMenu email={user.email ?? ''} fullName={fullName} />
+          {profile ? (
+            <UserMenu
+              email={profile.email}
+              fullName={profile.fullName ?? undefined}
+              avatarUrl={profile.avatarUrl ?? undefined}
+            />
           ) : (
             <>
               <Button

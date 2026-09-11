@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { LogOutIcon, UserIcon } from 'lucide-react';
 import { signOut } from '@/app/actions/auth';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { initials } from '@/lib/profile/user';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,25 +19,20 @@ import {
 export type UserMenuProps = {
   email: string;
   fullName?: string;
+  avatarUrl?: string;
 };
 
-/** First letters of the name, or of the email when we have no name. */
-function initials(fullName: string | undefined, email: string) {
-  const source = fullName?.trim() || email;
-  const parts = source.split(/[\s@._-]+/).filter(Boolean);
-  return (parts[0]?.[0] ?? '?')
-    .concat(parts.length > 1 ? parts[1][0] : '')
-    .toUpperCase();
-}
+export function UserMenu({ email, fullName, avatarUrl }: UserMenuProps) {
+  const fallback = initials(fullName, email);
 
-export function UserMenu({ email, fullName }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" size="icon" aria-label="Account menu">
             <Avatar className="size-7">
-              <AvatarFallback className="text-xs">{initials(fullName, email)}</AvatarFallback>
+              {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
+              <AvatarFallback className="text-xs">{fallback}</AvatarFallback>
             </Avatar>
           </Button>
         }

@@ -22,29 +22,48 @@ export default function AccountLoading() {
       <div className="flex flex-col gap-4">
         <Card>
           <CardHeader className="gap-2">
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-4 w-72 max-w-full" />
           </CardHeader>
-          <CardContent>
-            {/* The four `dt`/`dd` rows of the session list. */}
-            <div className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
-              {Array.from({ length: 4 }, (_, i) => (
-                <div key={i} className="contents">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-full max-w-64" />
+          <CardContent className="flex flex-col gap-6">
+            {/* Avatar row: the 64px picture and its two buttons. */}
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-4 w-28" />
+              <div className="flex items-center gap-4">
+                <Skeleton className="size-16 rounded-full" />
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-3 w-40" />
                 </div>
-              ))}
+              </div>
             </div>
+
+            {/* The name and email fields. */}
+            {Array.from({ length: 2 }, (_, i) => (
+              <div key={i} className="flex flex-col gap-2">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ))}
+
+            <Skeleton className="h-9 w-32" />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="gap-2">
-            <Skeleton className="h-5 w-36" />
-            <Skeleton className="h-4 w-72 max-w-full" />
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-48" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-4 w-44" />
+            <div className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
+              {Array.from({ length: 2 }, (_, i) => (
+                <div key={i} className="contents">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full max-w-64" />
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
