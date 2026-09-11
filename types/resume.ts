@@ -40,6 +40,8 @@ export type FeedResume = {
 
 export type ResumeFeedResponse = {
   items: FeedResume[];
+  /** Opaque cursor for the next oldest page, or null when there are no more posts. */
+  nextCursor: string | null;
 };
 
 export type ResumePdfPreviewProps = {

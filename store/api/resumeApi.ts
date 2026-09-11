@@ -3,8 +3,11 @@ import type { CreateResumeRequest, ResumeFeedResponse, ResumeResponse } from '@/
 
 export const resumeApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getResumes: build.query<ResumeFeedResponse, void>({
-      query: () => '/resumes',
+    getResumes: build.query<ResumeFeedResponse, string | void>({
+      query: (cursor) => ({
+        url: '/resumes',
+        params: cursor ? { cursor } : undefined,
+      }),
       providesTags: ['Resumes'],
     }),
     createResume: build.mutation<ResumeResponse, CreateResumeRequest>({
@@ -14,4 +17,4 @@ export const resumeApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useCreateResumeMutation, useGetResumesQuery } = resumeApi;
+export const { useCreateResumeMutation, useGetResumesQuery, useLazyGetResumesQuery } = resumeApi;

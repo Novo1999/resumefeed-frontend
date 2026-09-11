@@ -1,13 +1,16 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import dynamic from 'next/dynamic';
 import { FileTextIcon, MessageSquareIcon, RefreshCwIcon, StarIcon, ThumbsUpIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { initials } from '@/lib/profile/user';
-import { useGetResumesQuery } from '@/store/api/resumeApi';
-import type { ResumeFeedCardProps } from '@/types/resume';
+import { readApiError } from '@/store/api/errors';
+import { useGetResumesQuery, useLazyGetResumesQuery } from '@/store/api/resumeApi';
+import type { FeedResume, ResumeFeedCardProps } from '@/types/resume';
 
 // PDF.js uses browser APIs, so this module must never be server-rendered.
 const ResumePdfPreview = dynamic(
@@ -92,13 +95,79 @@ function FeedLoading() {
 
 export function ResumeFeed() {
   const { data, error, isLoading, refetch } = useGetResumesQuery();
+  const [fetchNextPage, { error: nextPageError, isFetching: isFetchingNextPage }] = useLazyGetResumesQuery();
+  const [resumes, setResumes] = useState<FeedResume[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const feedRef = useRef<HTMLDivElement>(null);
+  const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
+  const [scrollMargin, setScrollMargin] = useState(0);
+
+  // A fresh first page (including an RTK Query invalidation after upload) resets
+  // the loaded pages. That avoids mixing a newly ordered first page with stale
+  // older pages.
+  useEffect(() => {
+    if (!data) return;
+    setResumes(data.items);
+    setNextCursor(data.nextCursor);
+  }, [data]);
+
+  const loadNextPage = useCallback(async () => {
+    if (!nextCursor || isFetchingNextPage) return;
+
+    const page = await fetchNextPage(nextCursor).unwrap();
+    setResumes((current) => {
+      const knownIds = new Set(current.map((resume) => resume.id));
+      return [...current, ...page.items.filter((resume) => !knownIds.has(resume.id))];
+    });
+    setNextCursor(page.nextCursor);
+  }, [fetchNextPage, isFetchingNextPage, nextCursor]);
+
+  const virtualizer = useWindowVirtualizer({
+    count: resumes.length,
+    estimateSize: () => 500,
+    overscan: 2,
+    scrollMargin,
+  });
+
+  // The virtualizer tracks window scroll, so it needs the feed's document
+  // offset to place items correctly below the page heading.
+  useEffect(() => {
+    const updateScrollMargin = () => {
+      const feed = feedRef.current;
+      if (feed) setScrollMargin(feed.getBoundingClientRect().top + window.scrollY);
+    };
+
+    updateScrollMargin();
+    window.addEventListener('resize', updateScrollMargin);
+    return () => window.removeEventListener('resize', updateScrollMargin);
+  }, [resumes.length]);
+
+  // The sentinel is observed against the window, so reaching the bottom by
+  // scrolling anywhere on the page loads the next cursor page.
+  useEffect(() => {
+    const trigger = loadMoreTriggerRef.current;
+    if (!trigger || !nextCursor || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) void loadNextPage();
+      },
+      { rootMargin: '800px 0px' },
+    );
+    observer.observe(trigger);
+    return () => observer.disconnect();
+  }, [isFetchingNextPage, loadNextPage, nextCursor, resumes.length]);
 
   if (isLoading) return <FeedLoading />;
 
   if (error) {
+    const message = readApiError(error).message;
     return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed px-6 py-14 text-center">
-        <p className="font-medium">Couldn’t load the feed</p>
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-destructive/50 bg-destructive/5 px-6 py-14 text-center">
+        <p className="font-medium text-destructive">Couldn’t load the feed</p>
+        <p className="max-w-sm text-sm text-destructive" role="alert">
+          {message}
+        </p>
         <Button type="button" variant="outline" onClick={() => refetch()}>
           <RefreshCwIcon />
           Try again
@@ -107,7 +176,7 @@ export function ResumeFeed() {
     );
   }
 
-  if (!data || data.items.length === 0) {
+  if (!data || resumes.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-16 text-center">
         <div className="flex size-11 items-center justify-center rounded-full bg-muted">
@@ -123,5 +192,45 @@ export function ResumeFeed() {
     );
   }
 
-  return <div className="flex flex-col gap-5">{data.items.map((resume) => <FeedCard key={resume.id} resume={resume} />)}</div>;
+  const virtualItems = virtualizer.getVirtualItems();
+
+  return (
+    <div ref={feedRef} className="w-full" aria-label="Resume feed">
+      <div className="relative w-full" style={{ height: `${virtualizer.getTotalSize()}px` }}>
+        {virtualItems.map((virtualItem) => {
+          const resume = resumes[virtualItem.index];
+          return (
+            <div
+              key={resume.id}
+              data-index={virtualItem.index}
+              ref={virtualizer.measureElement}
+              className="absolute left-0 top-0 w-full pb-5"
+              style={{ transform: `translateY(${virtualItem.start - scrollMargin}px)` }}
+            >
+              <FeedCard resume={resume} />
+            </div>
+          );
+        })}
+      </div>
+
+      {isFetchingNextPage ? (
+        <div className="flex justify-center py-4 text-sm text-muted-foreground">Loading more resumesâ€¦</div>
+      ) : null}
+      {nextPageError ? (
+        <div className="flex flex-col items-center gap-2 py-4">
+          <p className="text-center text-sm text-destructive" role="alert">
+            Couldn’t load more resumes: {readApiError(nextPageError).message}
+          </p>
+          <Button type="button" variant="outline" size="sm" onClick={() => void loadNextPage()}>
+            <RefreshCwIcon />
+            Retry loading more
+          </Button>
+        </div>
+      ) : null}
+      {!nextCursor && !nextPageError ? (
+        <p className="py-4 text-center text-sm text-muted-foreground">Youâ€™re all caught up.</p>
+      ) : null}
+      {nextCursor ? <div ref={loadMoreTriggerRef} className="h-px" aria-hidden="true" /> : null}
+    </div>
+  );
 }
