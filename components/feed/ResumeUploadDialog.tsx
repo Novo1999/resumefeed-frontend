@@ -112,26 +112,28 @@ export function ResumeUploadDialog({
           <Button
             type="button"
             variant="outline"
-            className="group h-auto min-h-30 w-full justify-start gap-4 rounded-xl border-border bg-card px-4 py-4 text-left shadow-sm transition-all hover:border-primary/40 hover:bg-primary/[0.03] hover:shadow-md sm:px-5"
+            className="group h-auto min-h-26 w-full max-w-full justify-start gap-3 rounded-xl border-border bg-card px-3 py-3 text-left whitespace-normal shadow-sm transition-all hover:border-primary/40 hover:bg-primary/[0.03] hover:shadow-md sm:min-h-30 sm:gap-4 sm:px-5 sm:py-4"
           />
         }
       >
-        <Avatar className="size-12" size="lg">
+        <Avatar className="size-10 sm:size-12" size="lg">
           {ownerAvatarUrl ? <AvatarImage src={ownerAvatarUrl} alt="" /> : null}
           <AvatarFallback>{initials(ownerName, ownerEmail)}</AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="font-medium text-foreground">Get thoughtful feedback on your resume</p>
-          <p className="mt-1 text-sm leading-5 text-muted-foreground">
+        <div className="min-w-0 flex-1 whitespace-normal">
+          <p className="text-sm font-medium text-foreground sm:text-base">
+            Get thoughtful feedback on your resume
+          </p>
+          <p className="mt-1 text-xs leading-4 text-muted-foreground sm:text-sm sm:leading-5">
             Share a PDF with the community and start a review.
           </p>
-          <span className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary">
+          <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary sm:mt-3 sm:gap-2">
             <UploadIcon className="size-4" />
             Post a resume
           </span>
         </div>
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-105">
-          <UploadIcon className="size-5" />
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-105 sm:size-10">
+          <UploadIcon className="size-4 sm:size-5" />
           <span className="sr-only">Post a resume</span>
         </div>
       </DialogTrigger>
