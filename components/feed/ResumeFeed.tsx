@@ -6,7 +6,12 @@ import { CheckCircle2Icon, FileTextIcon, RefreshCwIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { readApiError } from '@/store/api/errors';
-import { useGetResumesInfiniteQuery, useRateResumeMutation } from '@/store/api/resumeApi';
+import {
+  useGetResumesInfiniteQuery,
+  useRateResumeMutation,
+  useReactToResumeMutation,
+} from '@/store/api/resumeApi';
+import type { ReactionKind } from '@/types/resume';
 import { ResumeFeedCard } from './ResumeFeedCard';
 import { ResumeFeedLoading } from './ResumeFeedLoading';
 
@@ -14,7 +19,9 @@ export function ResumeFeed() {
   const { data, error, isLoading, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetResumesInfiniteQuery();
   const [rateResume] = useRateResumeMutation();
+  const [reactToResume] = useReactToResumeMutation();
   const [ratingResumeIds, setRatingResumeIds] = useState<Set<string>>(new Set());
+  const [reactingResumeIds, setReactingResumeIds] = useState<Set<string>>(new Set());
   const [nextPageError, setNextPageError] = useState<string>();
   const feedRef = useRef<HTMLDivElement>(null);
   const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
@@ -51,6 +58,27 @@ export function ResumeFeed() {
       }
     },
     [rateResume, ratingResumeIds],
+  );
+
+  const react = useCallback(
+    async (resumeId: string, kind: ReactionKind | null) => {
+      if (reactingResumeIds.has(resumeId)) return;
+
+      setReactingResumeIds((current) => new Set(current).add(resumeId));
+
+      try {
+        await reactToResume({ resumeId, kind }).unwrap();
+      } catch (reactionError) {
+        toast.error(`Could not save your reaction: ${readApiError(reactionError).message}`);
+      } finally {
+        setReactingResumeIds((current) => {
+          const next = new Set(current);
+          next.delete(resumeId);
+          return next;
+        });
+      }
+    },
+    [reactToResume, reactingResumeIds],
   );
 
   const virtualizer = useWindowVirtualizer({
@@ -136,6 +164,8 @@ export function ResumeFeed() {
                 resume={resume}
                 isRating={ratingResumeIds.has(resume.id)}
                 onRate={rate}
+                isReacting={reactingResumeIds.has(resume.id)}
+                onReact={react}
               />
             </div>
           );

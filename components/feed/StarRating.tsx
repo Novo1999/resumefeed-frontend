@@ -32,10 +32,10 @@ export function StarRating({ value, pending, onRate }: StarRatingProps) {
           onFocus={() => setHoveredScore(score)}
           onBlur={() => setHoveredScore(null)}
           onClick={() => onRate(score)}
-          className="cursor-pointer rounded-sm p-0.5 outline-none transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring"
+          className="shrink-0 cursor-pointer rounded-sm p-0.5 outline-none transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring"
         >
           <StarIcon
-            className={`size-5 transition-colors ${
+            className={`size-[18px] transition-colors sm:size-5 ${
               score <= displayedScore ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/50'
             }`}
           />

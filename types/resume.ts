@@ -1,3 +1,33 @@
+export const REACTION_KINDS = ['like', 'heart', 'fire', 'wow', 'haha'] as const;
+
+export type ReactionKind = (typeof REACTION_KINDS)[number];
+
+export type ReactionCounts = Record<ReactionKind, number>;
+
+export type ReactToResumeRequest = {
+  kind: ReactionKind | null;
+};
+
+export type ResumeReactionResponse = {
+  resumeId: string;
+  viewerReaction: ReactionKind | null;
+  reactionCount: number;
+  reactionCounts: ReactionCounts;
+};
+
+/** A single person's reaction, for the "who reacted" list. */
+export type ResumeReactor = {
+  id: string;
+  kind: ReactionKind;
+  createdAt: string;
+  user: ResumeAuthor;
+};
+
+export type ResumeReactorsResponse = {
+  items: ResumeReactor[];
+  nextCursor: string | null;
+};
+
 export type CreateResumeRequest = {
   storagePath: string;
   originalFilename: string;
@@ -50,6 +80,8 @@ export type FeedResume = {
   viewerRating: number | null;
   commentCount: number;
   reactionCount: number;
+  reactionCounts: ReactionCounts;
+  viewerReaction: ReactionKind | null;
   createdAt: string;
 };
 

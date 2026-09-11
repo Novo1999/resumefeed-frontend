@@ -32,6 +32,6 @@ export const baseApi = createApi({
       },
     }),
   ),
-  tagTypes: ['Me', 'Resumes'],
+  tagTypes: ['Me', 'Resumes', 'Reactors'],
   endpoints: () => ({}),
 });
