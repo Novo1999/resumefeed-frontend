@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { InboxIcon } from 'lucide-react';
+import { ResumeUploadDialog } from '@/components/feed/resume-upload-dialog';
 import { getCurrentUser } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
@@ -15,11 +16,14 @@ export default async function FeedPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-12">
-      <div className="mb-8 flex flex-col gap-1">
-        <h1 className="font-heading text-3xl tracking-tight">Feed</h1>
-        <p className="text-sm text-muted-foreground">
-          Resumes the community is reviewing right now.
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-3xl tracking-tight">Feed</h1>
+          <p className="text-sm text-muted-foreground">
+            Resumes the community is reviewing right now.
+          </p>
+        </div>
+        <ResumeUploadDialog ownerId={user.id} />
       </div>
 
       <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-16 text-center">
