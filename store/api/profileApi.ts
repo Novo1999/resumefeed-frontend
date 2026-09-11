@@ -6,6 +6,7 @@ export type MeResponse = {
   email: string | null;
   fullName: string | null;
   avatarUrl: string | null;
+  role: string | null;
   emailConfirmed: boolean;
   metadata: Record<string, unknown>;
 };
@@ -13,13 +14,21 @@ export type MeResponse = {
 /** Email is deliberately absent — the API rejects any attempt to change it. */
 export type UpdateMeRequest = {
   fullName?: string;
+  role?: string | null;
   /** `null` clears the picture. */
   avatarUrl?: string | null;
 };
 
 export type ApiError = {
   error: string;
-  fieldErrors?: Partial<Record<'fullName' | 'avatarUrl', string>>;
+  fieldErrors?: Partial<Record<'fullName' | 'avatarUrl' | 'role', string>>;
+};
+
+export type PublicProfileResponse = {
+  id: string;
+  fullName: string | null;
+  avatarUrl: string | null;
+  role: string | null;
 };
 
 export const profileApi = baseApi.injectEndpoints({
@@ -34,11 +43,19 @@ export const profileApi = baseApi.injectEndpoints({
       providesTags: ['Me'],
     }),
 
+    getPublicProfile: build.query<PublicProfileResponse, string>({
+      query: (userId) => `/profiles/${userId}`,
+      providesTags: (_result, _error, userId) => [{ type: 'Profiles' as const, id: userId }],
+    }),
+
     updateMe: build.mutation<MeResponse, UpdateMeRequest>({
       query: (body) => ({ url: '/me', method: 'PATCH', body }),
-      invalidatesTags: ['Me'],
+      invalidatesTags: (result) => [
+        'Me',
+        ...(result ? [{ type: 'Profiles' as const, id: result.id }] : []),
+      ],
     }),
   }),
 });
 
-export const { useGetMeQuery, useUpdateMeMutation } = profileApi;
+export const { useGetMeQuery, useGetPublicProfileQuery, useUpdateMeMutation } = profileApi;

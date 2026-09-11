@@ -29,6 +29,7 @@ function ReplyBox({ replyingTo, onSubmit, onCancel }: ReplyBoxProps) {
       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <CornerDownRightIcon className="size-3.5 shrink-0" />
         Replying to {replyingTo.author?.fullName ?? 'Community member'}
+        {replyingTo.author?.role ? ` (${replyingTo.author.role})` : ''}
       </p>
       <CommentComposer
         onSubmit={onSubmit}

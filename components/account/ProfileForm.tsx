@@ -9,9 +9,11 @@ import { toast } from 'sonner';
 import { Field } from '@/components/auth/Field';
 import { FormMessage } from '@/components/auth/FormMessage';
 import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { profileSchema, type ProfileValues } from '@/lib/profile/schemas';
+import { ROLE_OPTIONS } from '@/lib/profile/roles';
 import { initials, type Profile } from '@/lib/profile/user';
 import { pruneOldAvatars, uploadAvatar, validateAvatarFile } from '@/lib/storage/avatars';
 import { readApiError } from '@/store/api/errors';
@@ -31,10 +33,12 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     handleSubmit,
     reset,
     setError,
+    setValue,
+    watch,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { fullName: profile.fullName ?? '' },
+    defaultValues: { fullName: profile.fullName ?? '', role: profile.role ?? '' },
   });
 
   useEffect(
@@ -74,7 +78,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     clearStaged();
     setRemoved(false);
     setFormMessage(undefined);
-    reset({ fullName: profile.fullName ?? '' });
+    reset({ fullName: profile.fullName ?? '', role: profile.role ?? '' });
   }
 
   const shownAvatar = staged?.previewUrl ?? (removed ? null : profile.avatarUrl);
@@ -83,6 +87,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     setFormMessage(undefined);
     const body: UpdateMeRequest = {};
     if (values.fullName !== (profile.fullName ?? '')) body.fullName = values.fullName;
+    if (values.role !== (profile.role ?? '')) body.role = values.role.trim() || null;
 
     try {
       if (staged) body.avatarUrl = await uploadAvatar(profile.id, staged.file);
@@ -97,13 +102,14 @@ export function ProfileForm({ profile }: { profile: Profile }) {
       if (body.avatarUrl !== undefined) await pruneOldAvatars(profile.id, updated.avatarUrl);
       clearStaged();
       setRemoved(false);
-      reset({ fullName: updated.fullName ?? '' });
+      reset({ fullName: updated.fullName ?? '', role: updated.role ?? '' });
       toast.success('Profile updated.');
       router.refresh();
     } catch (error) {
       const { message, fieldErrors } = readApiError(error);
       if (fieldErrors.fullName) setError('fullName', { message: fieldErrors.fullName });
-      setFormMessage(fieldErrors.avatarUrl ?? message);
+      if (fieldErrors.role) setError('role', { message: fieldErrors.role });
+      setFormMessage(fieldErrors.avatarUrl ?? fieldErrors.role ?? message);
     }
   });
 
@@ -150,6 +156,21 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           />
           <LockIcon className="pointer-events-none absolute inset-y-0 right-3 my-auto size-3.5 text-muted-foreground" />
         </div>
+      </Field>
+      <Field
+        name="role"
+        label="Role"
+        hint="Choose a suggested role or type your own."
+        error={errors.role?.message}
+      >
+        <Combobox
+          id="role"
+          value={watch('role')}
+          onValueChange={(role) => setValue('role', role, { shouldDirty: true, shouldValidate: true })}
+          options={ROLE_OPTIONS}
+          placeholder="e.g. Software Engineer"
+          disabled={isSubmitting}
+        />
       </Field>
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={isSubmitting || !hasChanges}>

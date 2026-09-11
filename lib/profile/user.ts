@@ -5,6 +5,7 @@ export type Profile = {
   email: string;
   fullName: string | null;
   avatarUrl: string | null;
+  role: string | null;
 };
 
 function readString(metadata: Record<string, unknown> | undefined, key: string) {
@@ -19,6 +20,7 @@ export function toProfile(user: User): Profile {
     email: user.email ?? '',
     fullName: readString(user.user_metadata, 'full_name'),
     avatarUrl: readString(user.user_metadata, 'avatar_url'),
+    role: readString(user.user_metadata, 'role'),
   };
 }
 

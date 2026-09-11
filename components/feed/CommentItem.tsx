@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { MoreHorizontalIcon, PencilIcon, ReplyIcon, Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -102,16 +103,33 @@ export function CommentItem({ comment, rootId, onReply, focused = false }: Comme
       data-comment-id={comment.id}
       className={`flex gap-2.5 rounded-md py-1.5 transition-colors ${highlighted ? 'bg-primary/10 ring-1 ring-primary/25' : ''}`}
     >
-      <Avatar className="size-7 shrink-0">
-        {comment.author?.avatarUrl ? <AvatarImage src={comment.author.avatarUrl} alt="" /> : null}
-        <AvatarFallback className="text-[11px]">
-          {initials(comment.author?.fullName, name)}
-        </AvatarFallback>
-      </Avatar>
+      {comment.author ? (
+        <Link
+          href={`/profiles/${encodeURIComponent(comment.author.id)}`}
+          aria-label={`View ${name}'s profile`}
+          className="shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          <Avatar className="size-7">
+            {comment.author.avatarUrl ? <AvatarImage src={comment.author.avatarUrl} alt="" /> : null}
+            <AvatarFallback className="text-[11px]">
+              {initials(comment.author.fullName, name)}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
+      ) : (
+        <Avatar className="size-7 shrink-0">
+          <AvatarFallback className="text-[11px]">{initials(undefined, name)}</AvatarFallback>
+        </Avatar>
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
           <span className="truncate text-sm font-medium">{name}</span>
+          {comment.author?.role ? (
+            <span className="max-w-32 shrink-0 truncate text-xs text-muted-foreground">
+              ({comment.author.role})
+            </span>
+          ) : null}
           <time className="shrink-0 text-xs text-muted-foreground" dateTime={comment.createdAt}>
             {formatCommentTime(comment.createdAt)}
           </time>
@@ -141,6 +159,7 @@ export function CommentItem({ comment, rootId, onReply, focused = false }: Comme
             {comment.replyToAuthor ? (
               <span className="pe-1 font-medium text-primary">
                 @{comment.replyToAuthor.fullName ?? 'Community member'}
+                {comment.replyToAuthor.role ? ` (${comment.replyToAuthor.role})` : ''}
               </span>
             ) : null}
             {comment.body}

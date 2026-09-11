@@ -76,6 +76,7 @@ export function ResumeDetail({
       onReact={react}
       showAllCommentsInitially
       focusCommentId={focusCommentId}
+      linkToDetail={false}
     />
   );
 }

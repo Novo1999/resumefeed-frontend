@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
+import Link from 'next/link';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { RefreshCwIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -125,12 +126,18 @@ function ReactorList({ resumeId }: { resumeId: string }) {
               style={{ height: `${row.size}px`, transform: `translateY(${row.start}px)` }}
             >
               <div className="relative shrink-0">
-                <Avatar className="size-9">
-                  {reactor.user.avatarUrl ? (
-                    <AvatarImage src={reactor.user.avatarUrl} alt="" />
-                  ) : null}
-                  <AvatarFallback>{initials(reactor.user.fullName, name)}</AvatarFallback>
-                </Avatar>
+                <Link
+                  href={`/profiles/${encodeURIComponent(reactor.user.id)}`}
+                  aria-label={`View ${name}'s profile`}
+                  className="block rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <Avatar className="size-9">
+                    {reactor.user.avatarUrl ? (
+                      <AvatarImage src={reactor.user.avatarUrl} alt="" />
+                    ) : null}
+                    <AvatarFallback>{initials(reactor.user.fullName, name)}</AvatarFallback>
+                  </Avatar>
+                </Link>
                 <span
                   aria-hidden="true"
                   className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full bg-background text-[11px] leading-none ring-1 ring-border"
@@ -138,7 +145,14 @@ function ReactorList({ resumeId }: { resumeId: string }) {
                   {meta.emoji}
                 </span>
               </div>
-              <span className="min-w-0 flex-1 truncate text-sm font-medium">{name}</span>
+              <span className="flex min-w-0 flex-1 items-baseline gap-1 text-sm font-medium">
+                <span className="truncate">{name}</span>
+                {reactor.user.role ? (
+                  <span className="max-w-28 shrink-0 truncate text-xs font-normal text-muted-foreground">
+                    ({reactor.user.role})
+                  </span>
+                ) : null}
+              </span>
               <span className="shrink-0 text-sm text-muted-foreground">{meta.label}</span>
             </li>
           );

@@ -6,6 +6,7 @@ export const profileSchema = z.object({
     .trim()
     .min(2, 'That name looks too short.')
     .max(80, 'That name is too long.'),
+  role: z.string().trim().max(100, 'Role must be 100 characters or fewer.'),
 });
 
 export type ProfileValues = z.infer<typeof profileSchema>;

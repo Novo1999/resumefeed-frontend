@@ -65,6 +65,7 @@ export type ResumeAuthor = {
   id: string;
   fullName: string | null;
   avatarUrl: string | null;
+  role: string | null;
 };
 
 /** A feed card response. `pdfUrl` is an API-issued, short-lived signed URL. */
@@ -94,10 +95,14 @@ export type ResumeFeedResponse = {
 export type ResumePdfPreviewProps = {
   pdfUrl: string;
   label: string;
+  detailHref?: string;
 };
 
 export type ResumeUploadDialogProps = {
   ownerId: string;
+  ownerName: string | null;
+  ownerEmail: string;
+  ownerAvatarUrl: string | null;
 };
 
 export type ResumeFeedCardProps = {
