@@ -75,10 +75,15 @@ export async function signup(values: SignupValues): Promise<AuthActionResult> {
   }
 
   // Supabase answers a duplicate signup with an identity-less decoy user rather
-  // than admitting the email is taken. Mirror that: same response either way.
+  // than creating another account. Keep the visitor on this form instead of
+  // presenting the successful-signup confirmation state.
   const isDecoyUser = data.user?.identities?.length === 0;
 
-  if (isDecoyUser || !data.session) {
+  if (isDecoyUser) {
+    return { message: 'An account with this email already exists. Please sign in instead.' };
+  }
+
+  if (!data.session) {
     return { emailConfirmationSent: true, email };
   }
 
