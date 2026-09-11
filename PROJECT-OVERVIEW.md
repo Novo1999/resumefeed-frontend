@@ -201,9 +201,15 @@ npm run dev              # :4000
 
 # frontend — terminal 2
 cd resumefeed-frontend
-cp .env.local.example .env.local   # fill the NEXT_PUBLIC_SUPABASE_* vars
+cp .env.local.example .env.local   # fill the NEXT_PUBLIC_* vars
 npm run dev                        # :3000
 ```
+
+For deployment, set `NEXT_PUBLIC_SITE_URL` to the frontend's canonical HTTPS
+origin (for example, `https://resume-feed.vercel.app`). The same value must be
+configured in Supabase Dashboard â†’ Authentication â†’ URL Configuration as the
+Site URL, with `https://resume-feed.vercel.app/auth/callback` added to Redirect
+URLs. This is where email-confirmation links return after signup.
 
 The backend logs a warning rather than crashing when `DATABASE_URL` is unset, so
 the API will boot and serve `/health` before Postgres is wired up.

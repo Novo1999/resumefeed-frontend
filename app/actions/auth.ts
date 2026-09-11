@@ -2,9 +2,9 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { AFTER_AUTH_REDIRECT, safeNextPath } from '@/lib/auth/routes';
+import { siteUrl } from '@/lib/site';
 import {
   loginSchema,
   signupSchema,
@@ -55,17 +55,15 @@ export async function signup(values: SignupValues): Promise<AuthActionResult> {
 
   const { fullName, email, password } = parsed.data;
 
-  const [supabase, requestHeaders] = await Promise.all([createSupabaseServerClient(), headers()]);
-
-  // Derived from the request so this works on localhost, previews and prod.
-  const origin =
-    requestHeaders.get('origin') ?? `http://${requestHeaders.get('host') ?? 'localhost:3000'}`;
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      // A reverse proxy may expose an internal localhost host header. Always
+      // send confirmation links to the configured public frontend URL instead.
+      emailRedirectTo: new URL('/auth/callback', siteUrl).toString(),
       data: { full_name: fullName },
     },
   });
