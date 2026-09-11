@@ -6,11 +6,17 @@ export const env = {
   resumeBucket: process.env.NEXT_PUBLIC_SUPABASE_RESUME_BUCKET ?? 'resumes',
 };
 
-if (typeof window !== 'undefined') {
-  if (!env.supabaseUrl || !env.supabaseAnonKey) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      '[ResumeFeed] Missing Supabase env vars. Copy .env.local.example to .env.local and fill them in.',
-    );
-  }
+/**
+ * Whether auth can work at all. Checked before building any Supabase client so
+ * a missing key produces the message below instead of a stack trace from deep
+ * inside the SDK — and so the public pages still render without one.
+ */
+export const isSupabaseConfigured = Boolean(env.supabaseUrl && env.supabaseAnonKey);
+
+export const SUPABASE_SETUP_MESSAGE =
+  'Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
+  'in resumefeed-frontend/.env.local (Supabase Dashboard → Project Settings → API), then restart `npm run dev`.';
+
+if (!isSupabaseConfigured) {
+  console.warn(`[ResumeFeed] ${SUPABASE_SETUP_MESSAGE}`);
 }
