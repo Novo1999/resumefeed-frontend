@@ -20,8 +20,9 @@ import { Label } from '@/components/ui/label';
 import { RESUME_ACCEPT, uploadResume, validateResumeFile } from '@/lib/storage/resumes';
 import { readApiError } from '@/store/api/errors';
 import { useCreateResumeMutation } from '@/store/api/resumeApi';
+import type { ResumeUploadDialogProps } from '@/types/resume';
 
-export function ResumeUploadDialog({ ownerId }: { ownerId: string }) {
+export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [createResume, { isLoading: isCreating }] = useCreateResumeMutation();

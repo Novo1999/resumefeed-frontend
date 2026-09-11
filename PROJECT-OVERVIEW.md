@@ -41,7 +41,7 @@ Auth and the account page are built. **No resume feature exists in either repo y
 | Session-aware header with avatar + user menu | Done |
 | Account page — avatar upload, name edit, read-only email | Done |
 | Landing page (`/`) | create-next-app boilerplate |
-| Feed (`/feed`) | Upload/create flow done; feed listing not started |
+| Feed (`/feed`) | Done — newest posts with page-one PDF previews and full-PDF links |
 
 Key files:
 - `store/api/baseApi.ts` — RTK Query root; inject feature endpoints here
@@ -94,9 +94,9 @@ The `/api` prefix, the bearer token and server-readable sessions are all closed 
    in `router.refresh()`. Anything reading metadata off the client session directly
    would show stale values.
 
-3. **Resume reads are not exposed yet.** The upload/create flow writes a PDF to the
-   caller's `resumes/{user_id}/` folder and creates its row, but the feed list and
-   signed-URL endpoint for rendering a PDF are still to come.
+3. **The community interaction loop is not exposed yet.** Feed posts now load and
+   render their first PDF page from time-limited URLs, but rating, comment, and
+   reaction endpoints still need to be built.
 
 ## Settled decisions
 
@@ -165,8 +165,9 @@ The `/api` prefix, the bearer token and server-readable sessions are all closed 
 2. **Landing page** — the marketing pitch; first thing anyone sees.
 3. ~~**Upload**~~ — the frontend uploads a PDF into `resumes/{user_id}/`; the API
    verifies its ownership and MIME type before creating the resume record.
-4. **Feed** — list resumes and issue a short-lived PDF URL, `GET /api/resumes`.
-5. **Ratings and reviews** — the actual community loop.
+4. ~~**Feed**~~ — `GET /api/resumes` lists newest posts with ten-minute signed
+   URLs; the viewer renders page one and opens the full PDF on demand.
+5. **Ratings, comments, and reactions** — the actual community loop.
 
 ## Running it locally
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { InboxIcon } from 'lucide-react';
+import { ResumeFeed } from '@/components/feed/resume-feed';
 import { ResumeUploadDialog } from '@/components/feed/resume-upload-dialog';
 import { getCurrentUser } from '@/lib/supabase/server';
 
@@ -26,17 +26,7 @@ export default async function FeedPage() {
         <ResumeUploadDialog ownerId={user.id} />
       </div>
 
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-16 text-center">
-        <div className="flex size-11 items-center justify-center rounded-full bg-muted">
-          <InboxIcon className="size-5 text-muted-foreground" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="font-medium">Nothing here yet</p>
-          <p className="max-w-xs text-sm text-muted-foreground">
-            The feed fills up as people post resumes and start trading reviews.
-          </p>
-        </div>
-      </div>
+      <ResumeFeed />
     </div>
   );
 }
