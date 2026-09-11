@@ -6,8 +6,9 @@ import { toProfile } from '@/lib/profile/user';
 import { getCurrentUser } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
-  title: 'Feed — Resume Feed',
+  title: 'Resume review feed',
   description: 'Resumes the community is reviewing right now.',
+  robots: { index: false, follow: false },
 };
 
 export default async function FeedPage() {

@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/store/providers';
-import { SiteHeader } from '@/components/SiteHeader';
 import { Toaster } from '@/components/ui/sonner';
+import { siteConfig, siteUrl } from '@/lib/site';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -23,9 +23,29 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'Resume Feed — Honest resume feedback from real people',
-  description:
-    'Share your resume, get honest feedback from the community, and discover strong resumes in your field.',
+  metadataBase: siteUrl,
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  keywords: ['resume feedback', 'resume review', 'career community', 'CV feedback'],
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
@@ -36,7 +56,6 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     >
       <body className="min-h-full flex flex-col">
         <Providers>
-          <SiteHeader />
           {children}
           <Toaster position="top-center" />
         </Providers>

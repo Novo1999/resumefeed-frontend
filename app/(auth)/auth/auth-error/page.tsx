@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-  title: 'Sign-in problem — Resume Feed',
+  title: 'Sign-in problem',
+  robots: { index: false, follow: false },
 };
 
 /** Where `app/auth/callback/route.ts` sends a link it could not redeem. */

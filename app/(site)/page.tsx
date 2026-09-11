@@ -9,7 +9,7 @@ import { ClosingCta } from '@/components/marketing/ClosingCta';
 import { LandingFooter } from '@/components/marketing/LandingFooter';
 
 export const metadata: Metadata = {
-  title: 'Resume Feed — Honest resume feedback from real people',
+  title: { absolute: 'Resume Feed' },
   description:
     'Post your resume to a public feed and get rated, marked up, and argued with by people in your field. Free, and reciprocal: post one, review one back.',
 };

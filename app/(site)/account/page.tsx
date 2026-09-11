@@ -6,7 +6,8 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Your account — Resume Feed',
+  title: 'Your account',
+  robots: { index: false, follow: false },
 };
 
 export default async function AccountPage() {

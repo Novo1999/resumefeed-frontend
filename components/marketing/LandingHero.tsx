@@ -15,7 +15,7 @@ export function LandingHero({ signedIn }: { signedIn: boolean }) {
           </p>
 
           <div className="mt-8">
-            <LandingCta signedIn={signedIn} />
+            <LandingCta signedIn={signedIn} prominent />
           </div>
 
           <p className="mt-5 text-sm text-muted-foreground">

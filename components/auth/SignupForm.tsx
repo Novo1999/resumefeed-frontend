@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from './Field';
 import { FormMessage } from './FormMessage';
+import { GoogleAuthButton } from './GoogleAuthButton';
 import { PasswordInput } from './PasswordInput';
 
 export function SignupForm() {
@@ -121,6 +122,14 @@ export function SignupForm() {
         {isSubmitting ? <Loader2Icon className="animate-spin" /> : null}
         {isSubmitting ? 'Creating account…' : 'Create account'}
       </Button>
+
+      <div className="relative flex items-center py-1" aria-hidden="true">
+        <div className="grow border-t" />
+        <span className="px-3 text-xs text-muted-foreground">or</span>
+        <div className="grow border-t" />
+      </div>
+
+      <GoogleAuthButton disabled={isSubmitting} onError={setFormMessage} />
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { PublicProfile } from '@/components/profile/PublicProfile';
 import { getCurrentUser } from '@/lib/supabase/server';
+
+export const metadata: Metadata = {
+  title: 'Member profile',
+  robots: { index: false, follow: false },
+};
 
 export default async function ProfilePage({ params }: { params: Promise<{ profileId: string }> }) {
   const { profileId } = await params;

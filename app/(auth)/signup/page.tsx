@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { SignupForm } from '@/components/auth/SignupForm';
 
 export const metadata: Metadata = {
-  title: 'Create an account — Resume Feed',
+  title: 'Create an account',
   description: 'Join Resume Feed to get honest feedback on your resume.',
+  robots: { index: false, follow: false },
 };
 
 export default function SignupPage() {

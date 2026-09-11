@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 export const metadata: Metadata = {
-  title: 'Sign in — Resume Feed',
+  title: 'Sign in',
   description: 'Sign in to share your resume and review others.',
+  robots: { index: false, follow: false },
 };
 
 export default async function LoginPage({ searchParams }: PageProps<'/login'>) {
