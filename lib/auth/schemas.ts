@@ -23,9 +23,7 @@ export const signupSchema = z.object({
     .min(2, 'That name looks too short.')
     .max(80, 'That name is too long.'),
   email: emailField,
-  password: z
-    .string()
-    .min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters.`),
+  password: z.string().min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters.`),
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;

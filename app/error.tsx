@@ -4,13 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { RotateCwIcon, TriangleAlertIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 /**
  * Catches render-time errors from the feed and every nested segment that

@@ -1,4 +1,5 @@
-import { AuthPitchPanel, AuthPitchStrip } from '@/components/marketing/auth-pitch';
+import { AuthPitchPanel } from '@/components/marketing/AuthPitchPanel';
+import { AuthPitchStrip } from '@/components/marketing/AuthPitchStrip';
 
 export default function AuthLayout({ children }: LayoutProps<'/'>) {
   return (

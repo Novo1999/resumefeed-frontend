@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileTextIcon, Loader2Icon, UploadIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { FormMessage } from '@/components/auth/form-parts';
+import { FormMessage } from '@/components/auth/FormMessage';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -146,7 +146,9 @@ export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="resume-title">Title <span className="text-muted-foreground">(optional)</span></Label>
+            <Label htmlFor="resume-title">
+              Title <span className="text-muted-foreground">(optional)</span>
+            </Label>
             <Input
               id="resume-title"
               value={title}
@@ -158,7 +160,9 @@ export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="resume-caption">Caption <span className="text-muted-foreground">(optional)</span></Label>
+            <Label htmlFor="resume-caption">
+              Caption <span className="text-muted-foreground">(optional)</span>
+            </Label>
             <Textarea
               id="resume-caption"
               value={caption}

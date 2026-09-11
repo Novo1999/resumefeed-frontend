@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { ResumeFeed } from '@/components/feed/resume-feed';
-import { ResumeUploadDialog } from '@/components/feed/resume-upload-dialog';
+import { ResumeFeed } from '@/components/feed/ResumeFeed';
+import { ResumeUploadDialog } from '@/components/feed/ResumeUploadDialog';
 import { getCurrentUser } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {

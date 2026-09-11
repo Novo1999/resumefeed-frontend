@@ -32,9 +32,7 @@ export function withLogging(rawBaseQuery: FetchBaseQueryFn): FetchBaseQueryFn {
 
     const request = typeof args === 'string' ? { url: args } : args;
     const method = request.method ?? 'GET';
-    const status = result.error
-      ? result.error.status
-      : (result.meta?.response?.status ?? 'done');
+    const status = result.error ? result.error.status : (result.meta?.response?.status ?? 'done');
     const ok = !result.error;
 
     console.groupCollapsed(

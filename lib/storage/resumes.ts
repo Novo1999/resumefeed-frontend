@@ -33,14 +33,11 @@ function resumePath(userId: string) {
  */
 export async function uploadResume(userId: string, file: File): Promise<string> {
   const path = resumePath(userId);
-  const { error } = await getSupabaseClient()
-    .storage
-    .from(env.resumeBucket)
-    .upload(path, file, {
-      contentType: RESUME_MIME_TYPE,
-      cacheControl: '3600',
-      upsert: false,
-    });
+  const { error } = await getSupabaseClient().storage.from(env.resumeBucket).upload(path, file, {
+    contentType: RESUME_MIME_TYPE,
+    cacheControl: '3600',
+    upsert: false,
+  });
 
   if (error) throw new Error(error.message);
   return path;

@@ -22,10 +22,7 @@ export type AuthActionResult = {
   email?: string;
 };
 
-export async function login(
-  values: LoginValues,
-  next?: string,
-): Promise<AuthActionResult> {
+export async function login(values: LoginValues, next?: string): Promise<AuthActionResult> {
   // A Server Action is a public POST endpoint, so re-validate server-side.
   const parsed = loginSchema.safeParse(values);
   if (!parsed.success) {
@@ -58,15 +55,11 @@ export async function signup(values: SignupValues): Promise<AuthActionResult> {
 
   const { fullName, email, password } = parsed.data;
 
-  const [supabase, requestHeaders] = await Promise.all([
-    createSupabaseServerClient(),
-    headers(),
-  ]);
+  const [supabase, requestHeaders] = await Promise.all([createSupabaseServerClient(), headers()]);
 
   // Derived from the request so this works on localhost, previews and prod.
   const origin =
-    requestHeaders.get('origin') ??
-    `http://${requestHeaders.get('host') ?? 'localhost:3000'}`;
+    requestHeaders.get('origin') ?? `http://${requestHeaders.get('host') ?? 'localhost:3000'}`;
 
   const { data, error } = await supabase.auth.signUp({
     email,

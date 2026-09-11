@@ -55,8 +55,7 @@ export default function GlobalError({
             padding: '1rem',
             background: 'var(--ge-bg)',
             color: 'var(--ge-fg)',
-            fontFamily:
-              'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+            fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
           }}
         >
           <main

@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { toProfile } from '@/lib/profile/user';
 import { Button } from '@/components/ui/button';
-import { UserMenu } from '@/components/auth/user-menu';
-import { Brand } from '@/components/brand';
+import { UserMenu } from '@/components/auth/UserMenu';
+import { Brand } from '@/components/Brand';
 
 /**
  * Server component, so the signed-in state is rendered on the server and the

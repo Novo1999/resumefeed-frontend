@@ -9,7 +9,9 @@ import { login } from '@/app/actions/auth';
 import { loginSchema, type LoginValues } from '@/lib/auth/schemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Field, FormMessage, PasswordInput } from './form-parts';
+import { Field } from './Field';
+import { FormMessage } from './FormMessage';
+import { PasswordInput } from './PasswordInput';
 
 export function LoginForm({ next }: { next?: string }) {
   const [formMessage, setFormMessage] = useState<string>();

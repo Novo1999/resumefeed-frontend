@@ -3,9 +3,9 @@ It should have a marketing pitch that should suppose to attract users to use thi
 and ratings to the resume.
 
 The tech stack I am trying to use here:
+
 - Supabase Auth
 - Express & TypeORM with POSTgreSQL in the backend, Supabase Storage (bucket) for resume files and images of users
 - The nextjs client uses redux and rtk and shadcn
-
 
 I am currently focusing on the authentication part. The auth should be done using supabase auth.

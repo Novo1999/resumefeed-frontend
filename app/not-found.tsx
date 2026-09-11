@@ -11,17 +11,13 @@ import { Button } from '@/components/ui/button';
 export default function NotFound() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-24 text-center">
-      <p className="font-mono text-xs tracking-widest text-muted-foreground">
-        404
-      </p>
+      <p className="font-mono text-xs tracking-widest text-muted-foreground">404</p>
 
       <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-4xl tracking-tight">
-          We couldn&apos;t find that page
-        </h1>
+        <h1 className="font-heading text-4xl tracking-tight">We couldn&apos;t find that page</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
-          The link may be out of date, or the resume you&apos;re after has since
-          been taken down by its author.
+          The link may be out of date, or the resume you&apos;re after has since been taken down by
+          its author.
         </p>
       </div>
 
@@ -29,12 +25,7 @@ export default function NotFound() {
         <Button render={<Link href="/" />} nativeButton={false} size="lg">
           Go to feed
         </Button>
-        <Button
-          render={<Link href="/account" />}
-          nativeButton={false}
-          variant="ghost"
-          size="lg"
-        >
+        <Button render={<Link href="/account" />} nativeButton={false} variant="ghost" size="lg">
           Your account
         </Button>
       </div>

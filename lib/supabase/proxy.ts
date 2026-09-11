@@ -10,9 +10,7 @@ const PROTECTED_PREFIXES = ['/', '/account'];
 const AUTH_ROUTES = ['/login', '/signup'];
 
 function startsWithAny(pathname: string, prefixes: string[]) {
-  return prefixes.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
+  return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 /**

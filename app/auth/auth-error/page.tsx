@@ -2,13 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { TriangleAlertIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const metadata: Metadata = {
   title: 'Sign-in problem — Resume Feed',

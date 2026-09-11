@@ -22,8 +22,7 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') as EmailOtpType | null;
 
   // Supabase reports a rejected link (expired, already used) in the query string.
-  const errorDescription =
-    searchParams.get('error_description') ?? searchParams.get('error');
+  const errorDescription = searchParams.get('error_description') ?? searchParams.get('error');
 
   const redirectTo = safeNextPath(searchParams.get('next'));
 

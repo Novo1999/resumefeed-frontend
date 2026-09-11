@@ -26,7 +26,5 @@ export function toProfile(user: User): Profile {
 export function initials(fullName: string | null | undefined, email: string) {
   const source = fullName?.trim() || email;
   const parts = source.split(/[\s@._-]+/).filter(Boolean);
-  return (parts[0]?.[0] ?? '?')
-    .concat(parts.length > 1 ? parts[1][0] : '')
-    .toUpperCase();
+  return (parts[0]?.[0] ?? '?').concat(parts.length > 1 ? parts[1][0] : '').toUpperCase();
 }

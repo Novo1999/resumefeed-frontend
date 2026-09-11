@@ -9,7 +9,9 @@ import { signup } from '@/app/actions/auth';
 import { MIN_PASSWORD_LENGTH, signupSchema, type SignupValues } from '@/lib/auth/schemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Field, FormMessage, PasswordInput } from './form-parts';
+import { Field } from './Field';
+import { FormMessage } from './FormMessage';
+import { PasswordInput } from './PasswordInput';
 
 export function SignupForm() {
   const [formMessage, setFormMessage] = useState<string>();
@@ -54,8 +56,8 @@ export function SignupForm() {
           <p className="font-medium">Check your inbox</p>
           <p className="text-sm text-muted-foreground">
             We sent a confirmation link to{' '}
-            <span className="font-medium text-foreground">{confirmationEmail}</span>. Click it
-            to finish setting up your account.
+            <span className="font-medium text-foreground">{confirmationEmail}</span>. Click it to
+            finish setting up your account.
           </p>
         </div>
         <Link

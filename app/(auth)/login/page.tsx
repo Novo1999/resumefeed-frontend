@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LoginForm } from '@/components/auth/login-form';
+import { LoginForm } from '@/components/auth/LoginForm';
 
 export const metadata: Metadata = {
   title: 'Sign in — Resume Feed',
@@ -17,9 +17,7 @@ export default async function LoginPage({ searchParams }: PageProps<'/login'>) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="font-heading text-3xl tracking-tight">Welcome back</h1>
-        <p className="text-sm text-muted-foreground">
-          Sign in to pick up where you left off.
-        </p>
+        <p className="text-sm text-muted-foreground">Sign in to pick up where you left off.</p>
       </div>
 
       <LoginForm next={nextPath} />

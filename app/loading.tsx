@@ -11,10 +11,7 @@ import { Loader2Icon } from 'lucide-react';
  */
 export default function Loading() {
   return (
-    <div
-      role="status"
-      className="flex flex-1 items-center justify-center px-4 py-24"
-    >
+    <div role="status" className="flex flex-1 items-center justify-center px-4 py-24">
       <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
       <span className="sr-only">Loading…</span>
     </div>
