@@ -79,6 +79,10 @@ export const commentApi = baseApi.injectEndpoints({
       }),
       providesTags: (_result, _error, commentId) => [{ type: 'Replies' as const, id: commentId }],
     }),
+    getCommentContext: build.query<CommentThread, string>({
+      query: (commentId) => `/comments/${commentId}/context`,
+      providesTags: (_result, _error, commentId) => [{ type: 'Comments' as const, id: commentId }],
+    }),
 
     createComment: build.mutation<Comment, { resumeId: string } & WriteCommentRequest>({
       query: ({ resumeId, body }) => ({
@@ -215,6 +219,7 @@ export const {
   useCreateReplyMutation,
   useDeleteCommentMutation,
   useGetCommentRepliesInfiniteQuery,
+  useGetCommentContextQuery,
   useGetCommentThreadsInfiniteQuery,
   useReactToCommentMutation,
   useUpdateCommentMutation,

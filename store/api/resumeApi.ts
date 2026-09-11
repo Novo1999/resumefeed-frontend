@@ -37,6 +37,10 @@ export const resumeApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Resumes'],
     }),
+    getResume: build.query<FeedResume, string>({
+      query: (resumeId) => `/resumes/${resumeId}`,
+      providesTags: (_result, _error, resumeId) => [{ type: 'Resumes' as const, id: resumeId }],
+    }),
     createResume: build.mutation<ResumeResponse, CreateResumeRequest>({
       query: (body) => ({ url: '/resumes', method: 'POST', body }),
       invalidatesTags: ['Resumes'],
@@ -127,6 +131,7 @@ export const resumeApi = baseApi.injectEndpoints({
 export const {
   useCreateResumeMutation,
   useGetResumeReactorsInfiniteQuery,
+  useGetResumeQuery,
   useGetResumesInfiniteQuery,
   useRateResumeMutation,
   useReactToResumeMutation,

@@ -9,6 +9,7 @@ import { readApiError } from '@/store/api/errors';
 import {
   useCreateCommentMutation,
   useGetCommentThreadsInfiniteQuery,
+  useGetCommentContextQuery,
 } from '@/store/api/commentApi';
 import { CommentComposer } from './CommentComposer';
 import { CommentThread } from './CommentThread';
@@ -20,6 +21,8 @@ type CommentsSectionProps = {
   resumeId: string;
   /** The card's own total, which counts replies and excludes deleted comments. */
   commentCount: number;
+  showAllInitially?: boolean;
+  focusCommentId?: string;
 };
 
 /**
@@ -27,14 +30,26 @@ type CommentsSectionProps = {
  * virtualized, so only the few cards near the viewport ever mount one and ask
  * for comments.
  */
-export function CommentsSection({ resumeId, commentCount }: CommentsSectionProps) {
+export function CommentsSection({
+  resumeId,
+  commentCount,
+  showAllInitially = false,
+  focusCommentId,
+}: CommentsSectionProps) {
   const { data, error, isLoading, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetCommentThreadsInfiniteQuery(resumeId);
   const [createComment] = useCreateCommentMutation();
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(showAllInitially || Boolean(focusCommentId));
+  const { data: focusedThread } = useGetCommentContextQuery(focusCommentId ?? '', {
+    skip: !focusCommentId,
+  });
 
   const threads = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
-  const visible = showAll ? threads : threads.slice(0, PREVIEW_THREADS);
+  const threadsWithFocused = useMemo(() => {
+    if (!focusedThread || threads.some((thread) => thread.id === focusedThread.id)) return threads;
+    return [focusedThread, ...threads];
+  }, [focusedThread, threads]);
+  const visible = showAll ? threadsWithFocused : threadsWithFocused.slice(0, PREVIEW_THREADS);
   const collapsed = !showAll && (threads.length > PREVIEW_THREADS || hasNextPage);
 
   async function submitComment(body: string) {
@@ -104,7 +119,7 @@ export function CommentsSection({ resumeId, commentCount }: CommentsSectionProps
         <div className="flex flex-col divide-y">
           {visible.map((thread) => (
             <div key={thread.id} className="py-1.5 first:pt-0 last:pb-0">
-              <CommentThread thread={thread} />
+              <CommentThread thread={thread} focusCommentId={focusCommentId} />
             </div>
           ))}
         </div>

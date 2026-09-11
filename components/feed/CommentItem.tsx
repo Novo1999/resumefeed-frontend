@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MoreHorizontalIcon, PencilIcon, ReplyIcon, Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,13 +30,23 @@ type CommentItemProps = {
   /** The thread this comment belongs to; null when it is itself the root. */
   rootId: string | null;
   onReply: (comment: Comment) => void;
+  focused?: boolean;
 };
 
-export function CommentItem({ comment, rootId, onReply }: CommentItemProps) {
+export function CommentItem({ comment, rootId, onReply, focused = false }: CommentItemProps) {
   const [editing, setEditing] = useState(false);
   const [updateComment] = useUpdateCommentMutation();
   const [deleteComment, { isLoading: isDeleting }] = useDeleteCommentMutation();
   const [reactToComment, { isLoading: isReacting }] = useReactToCommentMutation();
+  const itemRef = useRef<HTMLDivElement>(null);
+  const [highlighted, setHighlighted] = useState(focused);
+
+  useEffect(() => {
+    if (!focused) return;
+    itemRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const timeout = window.setTimeout(() => setHighlighted(false), 2400);
+    return () => window.clearTimeout(timeout);
+  }, [focused]);
 
   if (comment.deleted) {
     return (
@@ -87,7 +97,11 @@ export function CommentItem({ comment, rootId, onReply }: CommentItemProps) {
   }
 
   return (
-    <div className="flex gap-2.5 py-1.5">
+    <div
+      ref={itemRef}
+      data-comment-id={comment.id}
+      className={`flex gap-2.5 rounded-md py-1.5 transition-colors ${highlighted ? 'bg-primary/10 ring-1 ring-primary/25' : ''}`}
+    >
       <Avatar className="size-7 shrink-0">
         {comment.author?.avatarUrl ? <AvatarImage src={comment.author.avatarUrl} alt="" /> : null}
         <AvatarFallback className="text-[11px]">

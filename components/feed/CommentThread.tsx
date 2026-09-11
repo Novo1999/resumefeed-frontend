@@ -13,6 +13,7 @@ import { CommentItem } from './CommentItem';
 
 type CommentThreadProps = {
   thread: Thread;
+  focusCommentId?: string;
 };
 
 type ReplyBoxProps = {
@@ -45,18 +46,24 @@ function ReplyBox({ replyingTo, onSubmit, onCancel }: ReplyBoxProps) {
  * thread itself; opening it swaps them for the paginated list from the replies
  * endpoint, so a long thread is never loaded until someone asks for it.
  */
-export function CommentThread({ thread }: CommentThreadProps) {
-  const [expanded, setExpanded] = useState(false);
+export function CommentThread({ thread, focusCommentId }: CommentThreadProps) {
+  const containsFocus =
+    focusCommentId === thread.id || thread.replies.some((reply) => reply.id === focusCommentId);
+  const [expanded, setExpanded] = useState(containsFocus);
   const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
   const [createReply] = useCreateReplyMutation();
 
   const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetCommentRepliesInfiniteQuery(thread.id, { skip: !expanded });
+    useGetCommentRepliesInfiniteQuery(thread.id, { skip: !expanded || containsFocus });
 
   const loadedReplies = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
   // Until the full list arrives, the preview that came with the thread is what
   // there is to show — swapping to an empty array would blank the thread.
-  const replies = expanded && loadedReplies.length > 0 ? loadedReplies : thread.replies;
+  const replies = containsFocus
+    ? thread.replies
+    : expanded && loadedReplies.length > 0
+      ? loadedReplies
+      : thread.replies;
   const hiddenReplies = thread.replyCount - replies.length;
   // The replies rail also hosts the reply box, so it has to exist for the very
   // first reply on a thread that has none yet.
@@ -87,7 +94,12 @@ export function CommentThread({ thread }: CommentThreadProps) {
 
   return (
     <div className="flex flex-col">
-      <CommentItem comment={thread} rootId={null} onReply={setReplyingTo} />
+      <CommentItem
+        comment={thread}
+        rootId={null}
+        onReply={setReplyingTo}
+        focused={focusCommentId === thread.id}
+      />
 
       {showRail ? (
         <div className="ms-3.5 flex flex-col border-s ps-3.5">
@@ -95,7 +107,12 @@ export function CommentThread({ thread }: CommentThreadProps) {
 
           {replies.map((reply) => (
             <Fragment key={reply.id}>
-              <CommentItem comment={reply} rootId={thread.id} onReply={setReplyingTo} />
+              <CommentItem
+                comment={reply}
+                rootId={thread.id}
+                onReply={setReplyingTo}
+                focused={focusCommentId === reply.id}
+              />
               {replyBoxFor(reply)}
             </Fragment>
           ))}

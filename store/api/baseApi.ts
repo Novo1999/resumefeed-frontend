@@ -32,6 +32,6 @@ export const baseApi = createApi({
       },
     }),
   ),
-  tagTypes: ['Me', 'Resumes', 'Reactors', 'Comments', 'Replies'],
+  tagTypes: ['Me', 'Resumes', 'Reactors', 'Comments', 'Replies', 'Notifications'],
   endpoints: () => ({}),
 });

@@ -5,13 +5,28 @@ import { StarIcon } from 'lucide-react';
 
 type StarRatingProps = {
   value: number | null;
-  pending: boolean;
-  onRate: (score: number) => void;
+  pending?: boolean;
+  onRate?: (score: number) => void;
+  readOnly?: boolean;
 };
 
-export function StarRating({ value, pending, onRate }: StarRatingProps) {
+export function StarRating({ value, pending = false, onRate, readOnly = false }: StarRatingProps) {
   const [hoveredScore, setHoveredScore] = useState<number | null>(null);
   const displayedScore = hoveredScore ?? value ?? 0;
+
+  if (readOnly) {
+    return (
+      <div className="flex items-center" role="img" aria-label={`${value ?? 0} out of 5 stars`}>
+        {[1, 2, 3, 4, 5].map((score) => (
+          <StarIcon
+            key={score}
+            className={`size-4 ${score <= displayedScore ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/50'}`}
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -31,7 +46,7 @@ export function StarRating({ value, pending, onRate }: StarRatingProps) {
           onMouseLeave={() => setHoveredScore(null)}
           onFocus={() => setHoveredScore(score)}
           onBlur={() => setHoveredScore(null)}
-          onClick={() => onRate(score)}
+          onClick={() => onRate?.(score)}
           className="shrink-0 cursor-pointer rounded-sm p-0.5 outline-none transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring"
         >
           <StarIcon

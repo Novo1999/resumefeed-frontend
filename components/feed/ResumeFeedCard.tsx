@@ -24,6 +24,8 @@ type ResumeFeedCardPropsWithActions = ResumeFeedCardProps & {
   onRate: (resumeId: string, score: number) => void;
   isReacting: boolean;
   onReact: (resumeId: string, kind: ReactionKind | null) => void;
+  showAllCommentsInitially?: boolean;
+  focusCommentId?: string;
 };
 
 export function ResumeFeedCard({
@@ -32,6 +34,8 @@ export function ResumeFeedCard({
   onRate,
   isReacting,
   onReact,
+  showAllCommentsInitially = false,
+  focusCommentId,
 }: ResumeFeedCardPropsWithActions) {
   const authorName = resume.author.fullName ?? 'Community member';
   const label = resume.title ?? resume.originalFilename;
@@ -110,7 +114,12 @@ export function ResumeFeedCard({
         </div>
       </div>
 
-      <CommentsSection resumeId={resume.id} commentCount={resume.commentCount} />
+      <CommentsSection
+        resumeId={resume.id}
+        commentCount={resume.commentCount}
+        showAllInitially={showAllCommentsInitially}
+        focusCommentId={focusCommentId}
+      />
     </article>
   );
 }

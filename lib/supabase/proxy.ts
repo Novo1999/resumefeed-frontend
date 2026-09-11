@@ -4,7 +4,7 @@ import { env, isSupabaseConfigured, SUPABASE_SETUP_MESSAGE } from '../env';
 import { AFTER_AUTH_REDIRECT } from '../auth/routes';
 
 /** Routes that require a signed-in user. Prefix match, so `/account/x` is covered. */
-const PROTECTED_PREFIXES = ['/feed', '/account'];
+const PROTECTED_PREFIXES = ['/feed', '/account', '/notifications', '/resumes'];
 
 /** Auth pages a signed-in user has no reason to see. */
 const AUTH_ROUTES = ['/login', '/signup'];

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { toProfile } from '@/lib/profile/user';
 import { Button } from '@/components/ui/button';
-import { UserMenu } from '@/components/auth/UserMenu';
+import { SignedInNavigation } from '@/components/auth/SignedInNavigation';
 import { Brand } from '@/components/Brand';
 
 /**
@@ -21,11 +21,8 @@ export async function SiteHeader() {
         <nav className="flex items-center gap-2">
           {profile ? (
             <>
-              {/* `/` is the pitch now, so signed-in people need one click back to the feed. */}
-              <Button render={<Link href="/feed" />} nativeButton={false} variant="ghost" size="sm">
-                Feed
-              </Button>
-              <UserMenu
+              <SignedInNavigation
+                userId={profile.id}
                 email={profile.email}
                 fullName={profile.fullName ?? undefined}
                 avatarUrl={profile.avatarUrl ?? undefined}
