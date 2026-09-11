@@ -37,11 +37,11 @@ Auth and the account page are built. **No resume feature exists in either repo y
 | Dev-only RTK Query console logger | Done |
 | Supabase clients — browser, server (RSC), proxy | Done, cookie-based sessions |
 | Auth pages — `/login`, `/signup`, `/auth/callback`, server actions | Done |
-| Route gating + session refresh in `proxy.ts` | Done — `/account`, `/feed` |
+| Route gating + session refresh in `proxy.ts` | Done — `/`, `/account` |
 | Session-aware header with avatar + user menu | Done |
 | Account page — avatar upload, name edit, read-only email | Done |
 | Landing page (`/`) | create-next-app boilerplate |
-| Feed (`/feed`) | Done — newest posts with page-one PDF previews and full-PDF links |
+| Feed (`/`) | Done — newest posts with page-one PDF previews and full-PDF links |
 
 Key files:
 - `store/api/baseApi.ts` — RTK Query root; inject feature endpoints here

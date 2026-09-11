@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 
 /**
- * Catches render-time errors from `app/page.tsx` and every nested segment that
+ * Catches render-time errors from the feed and every nested segment that
  * doesn't define its own `error.tsx`. It does *not* cover the root layout —
  * `SiteHeader`'s Supabase call lives there, and a throw from it is caught by
  * `app/global-error.tsx` instead.
@@ -59,7 +59,7 @@ export default function Error({
             size="lg"
             className="w-full"
           >
-            Back home
+            Back to feed
           </Button>
 
           {/* Lets someone quote the exact failure in a bug report — it's the

@@ -27,7 +27,7 @@ export default function NotFound() {
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <Button render={<Link href="/" />} nativeButton={false} size="lg">
-          Back home
+          Go to feed
         </Button>
         <Button
           render={<Link href="/account" />}

@@ -1,4 +1,4 @@
-export const AFTER_AUTH_REDIRECT = '/feed';
+export const AFTER_AUTH_REDIRECT = '/';
 
 /** Rejects `//host` too — browsers read that as protocol-relative. */
 export function safeNextPath(value: unknown): string {
