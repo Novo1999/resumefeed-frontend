@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { initials } from '@/lib/profile/user';
+import { formatPostedTime } from '@/lib/resume/time';
 import type { ReactionKind } from '@/types/resume';
 import type { ResumeFeedCardProps } from '@/types/resume';
 import { ReactionPicker } from './ReactionPicker';
@@ -48,9 +49,7 @@ export function ResumeFeedCard({
           <p className="truncate text-xs text-muted-foreground">{label}</p>
         </div>
         <time className="shrink-0 text-xs text-muted-foreground" dateTime={resume.createdAt}>
-          {new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(
-            new Date(resume.createdAt),
-          )}
+          {formatPostedTime(resume.createdAt)}
         </time>
       </div>
 
