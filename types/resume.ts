@@ -2,6 +2,7 @@ export type CreateResumeRequest = {
   storagePath: string;
   originalFilename: string;
   title?: string | null;
+  caption?: string | null;
 };
 
 /** Mirrors the creation response from `resumefeed-backend/src/types/resume.ts`. */
@@ -11,11 +12,23 @@ export type ResumeResponse = {
   storagePath: string;
   originalFilename: string;
   title: string | null;
+  caption: string | null;
   ratingCount: number;
   averageRating: number | null;
   commentCount: number;
   reactionCount: number;
   createdAt: string;
+};
+
+export type RateResumeRequest = {
+  score: number;
+};
+
+export type ResumeRatingResponse = {
+  resumeId: string;
+  viewerRating: number;
+  ratingCount: number;
+  averageRating: number | null;
 };
 
 export type ResumeAuthor = {
@@ -28,11 +41,13 @@ export type ResumeAuthor = {
 export type FeedResume = {
   id: string;
   title: string | null;
+  caption: string | null;
   originalFilename: string;
   author: ResumeAuthor;
   pdfUrl: string;
   ratingCount: number;
   averageRating: number | null;
+  viewerRating: number | null;
   commentCount: number;
   reactionCount: number;
   createdAt: string;

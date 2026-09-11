@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { RESUME_ACCEPT, uploadResume, validateResumeFile } from '@/lib/storage/resumes';
 import { readApiError } from '@/store/api/errors';
 import { useCreateResumeMutation } from '@/store/api/resumeApi';
@@ -32,6 +33,7 @@ export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
   // uploading a second copy of the same PDF.
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
   const [title, setTitle] = useState('');
+  const [caption, setCaption] = useState('');
   const [message, setMessage] = useState<string>();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -52,6 +54,7 @@ export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
     setFile(null);
     setUploadedPath(null);
     setTitle('');
+    setCaption('');
     setMessage(undefined);
   }
 
@@ -76,6 +79,7 @@ export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
         storagePath: path,
         originalFilename: file.name,
         title: title.trim() || null,
+        caption: caption.trim() || null,
       }).unwrap();
 
       toast.success('Your resume is now in the feed.');
@@ -151,6 +155,20 @@ export function ResumeUploadDialog({ ownerId }: ResumeUploadDialogProps) {
               placeholder="e.g. Product designer resume"
               disabled={busy}
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="resume-caption">Caption <span className="text-muted-foreground">(optional)</span></Label>
+            <Textarea
+              id="resume-caption"
+              value={caption}
+              onChange={(event) => setCaption(event.target.value)}
+              maxLength={500}
+              placeholder="Tell the community what feedback you want."
+              disabled={busy}
+              rows={3}
+            />
+            <p className="text-right text-xs text-muted-foreground">{caption.length}/500</p>
           </div>
 
           <DialogFooter>

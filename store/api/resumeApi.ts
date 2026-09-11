@@ -1,5 +1,11 @@
 import { baseApi } from './baseApi';
-import type { CreateResumeRequest, ResumeFeedResponse, ResumeResponse } from '@/types/resume';
+import type {
+  CreateResumeRequest,
+  RateResumeRequest,
+  ResumeFeedResponse,
+  ResumeRatingResponse,
+  ResumeResponse,
+} from '@/types/resume';
 
 export const resumeApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -14,7 +20,10 @@ export const resumeApi = baseApi.injectEndpoints({
       query: (body) => ({ url: '/resumes', method: 'POST', body }),
       invalidatesTags: ['Resumes'],
     }),
+    rateResume: build.mutation<ResumeRatingResponse, { resumeId: string; score: RateResumeRequest['score'] }>({
+      query: ({ resumeId, score }) => ({ url: `/resumes/${resumeId}/rating`, method: 'PUT', body: { score } }),
+    }),
   }),
 });
 
-export const { useCreateResumeMutation, useGetResumesQuery, useLazyGetResumesQuery } = resumeApi;
+export const { useCreateResumeMutation, useGetResumesQuery, useLazyGetResumesQuery, useRateResumeMutation } = resumeApi;

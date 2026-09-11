@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import dynamic from 'next/dynamic';
-import { FileTextIcon, MessageSquareIcon, RefreshCwIcon, StarIcon, ThumbsUpIcon } from 'lucide-react';
+import { CheckCircle2Icon, FileTextIcon, MessageSquareIcon, RefreshCwIcon, StarIcon, ThumbsUpIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -43,6 +43,10 @@ function FeedCard({ resume }: ResumeFeedCardProps) {
           )}
         </time>
       </div>
+
+      {resume.caption ? (
+        <p className="whitespace-pre-wrap px-4 pb-3 text-sm leading-6 text-foreground">{resume.caption}</p>
+      ) : null}
 
       <div className="overflow-hidden border-y bg-muted/30">
         <ResumePdfPreview pdfUrl={resume.pdfUrl} label={label} />
@@ -228,7 +232,10 @@ export function ResumeFeed() {
         </div>
       ) : null}
       {!nextCursor && !nextPageError ? (
-        <p className="py-4 text-center text-sm text-muted-foreground">Youâ€™re all caught up.</p>
+        <p className="flex items-center justify-center gap-2 py-5 text-sm text-muted-foreground">
+          <CheckCircle2Icon className="size-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+          You&apos;re all caught up.
+        </p>
       ) : null}
       {nextCursor ? <div ref={loadMoreTriggerRef} className="h-px" aria-hidden="true" /> : null}
     </div>
