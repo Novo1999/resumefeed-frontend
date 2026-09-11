@@ -1,4 +1,4 @@
-import type { FeedResume, ReactionCounts, ReactionKind } from '@/types/resume';
+import type { ReactionCounts, ReactionKind } from '@/types/resume';
 import { REACTION_KINDS } from '@/types/resume';
 
 export const REACTION_META: Record<ReactionKind, { emoji: string; label: string }> = {
@@ -9,27 +9,32 @@ export const REACTION_META: Record<ReactionKind, { emoji: string; label: string 
   haha: { emoji: '😂', label: 'Haha' },
 };
 
-export function optimisticReaction(resume: FeedResume, kind: ReactionKind | null): FeedResume {
-  const previous = resume.viewerReaction;
-  if (previous === kind) return resume;
+/** Anything carrying the one-per-person reaction shape: a resume or a comment. */
+export type Reactable = {
+  viewerReaction: ReactionKind | null;
+  reactionCounts: ReactionCounts;
+  reactionCount: number;
+};
 
-  const reactionCounts: ReactionCounts = { ...resume.reactionCounts };
+export function optimisticReaction<T extends Reactable>(item: T, kind: ReactionKind | null): T {
+  const previous = item.viewerReaction;
+  if (previous === kind) return item;
+
+  const reactionCounts: ReactionCounts = { ...item.reactionCounts };
   if (previous) reactionCounts[previous] = Math.max(0, reactionCounts[previous] - 1);
   if (kind) reactionCounts[kind] += 1;
 
   const delta = (kind ? 1 : 0) - (previous ? 1 : 0);
 
   return {
-    ...resume,
+    ...item,
     viewerReaction: kind,
     reactionCounts,
-    reactionCount: Math.max(0, resume.reactionCount + delta),
+    reactionCount: Math.max(0, item.reactionCount + delta),
   };
 }
 
 /** The kinds actually used on a resume, most popular first. */
 export function rankedReactions(counts: ReactionCounts): ReactionKind[] {
-  return REACTION_KINDS.filter((kind) => counts[kind] > 0).sort(
-    (a, b) => counts[b] - counts[a],
-  );
+  return REACTION_KINDS.filter((kind) => counts[kind] > 0).sort((a, b) => counts[b] - counts[a]);
 }

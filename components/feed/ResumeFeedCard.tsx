@@ -10,6 +10,7 @@ import type { ReactionKind } from '@/types/resume';
 import type { ResumeFeedCardProps } from '@/types/resume';
 import { ReactionPicker } from './ReactionPicker';
 import { ReactionsDialog } from './ReactionsDialog';
+import { CommentsSection } from './CommentsSection';
 import { StarRating } from './StarRating';
 
 const ResumePdfPreview = dynamic(
@@ -109,6 +110,8 @@ export function ResumeFeedCard({
           </Button>
         </div>
       </div>
+
+      <CommentsSection resumeId={resume.id} commentCount={resume.commentCount} />
     </article>
   );
 }

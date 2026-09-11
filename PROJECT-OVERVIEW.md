@@ -29,19 +29,19 @@ Auth and the account page are built. **No resume feature exists in either repo y
 
 ## Frontend state
 
-| Piece                                                                      | Status                                                            |
-| -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Next.js + TS + Tailwind v4 config                                          | Done                                                              |
-| Redux store, typed hooks, `Providers` in root layout                       | Done                                                              |
-| RTK Query `baseApi` at `${NEXT_PUBLIC_API_URL}/api`, bearer token attached | Done                                                              |
-| Dev-only RTK Query console logger                                          | Done                                                              |
-| Supabase clients — browser, server (RSC), proxy                            | Done, cookie-based sessions                                       |
-| Auth pages — `/login`, `/signup`, `/auth/callback`, server actions         | Done                                                              |
-| Route gating + session refresh in `proxy.ts`                               | Done — `/`, `/account`                                            |
-| Session-aware header with avatar + user menu                               | Done                                                              |
-| Account page — avatar upload, name edit, read-only email                   | Done                                                              |
-| Landing page (`/`)                                                         | create-next-app boilerplate                                       |
-| Feed (`/`)                                                                 | Done — newest posts with page-one PDF previews and full-PDF links |
+| Piece                                                                      | Status                         |
+| -------------------------------------------------------------------------- | ------------------------------ |
+| Next.js + TS + Tailwind v4 config                                          | Done                           |
+| Redux store, typed hooks, `Providers` in root layout                       | Done                           |
+| RTK Query `baseApi` at `${NEXT_PUBLIC_API_URL}/api`, bearer token attached | Done                           |
+| Dev-only RTK Query console logger                                          | Done                           |
+| Supabase clients — browser, server (RSC), proxy                            | Done, cookie-based sessions    |
+| Auth pages — `/login`, `/signup`, `/auth/callback`, server actions         | Done                           |
+| Route gating + session refresh in `proxy.ts`                               | Done — `/account`, `/feed`     |
+| Session-aware header with avatar + user menu                               | Done                           |
+| Account page — avatar upload, name edit, read-only email                   | Done                           |
+| Landing page (`/`)                                                         | create-next-app boilerplate    |
+| Feed (`/feed`), resume upload                                              | Empty state only / not started |
 
 Key files:
 
@@ -55,16 +55,19 @@ Key files:
 
 ## Backend state
 
-| Piece                                                         | Status                                             |
-| ------------------------------------------------------------- | -------------------------------------------------- |
-| Express app factory, CORS (credentials on), JSON body parsing | Done                                               |
-| `GET /health`                                                 | Done                                               |
-| Auth middleware — `requireAuth`, `optionalAuth`               | Done, verifies Supabase JWT                        |
-| `GET /api/me`, `PATCH /api/me`                                | Done — profile read/update                         |
-| Storage buckets + RLS policies                                | Done — `supabase/storage-setup.sql`                |
-| TypeORM DataSource against Supabase Postgres                  | Configured, connects lazily                        |
-| Entities + first migration                                    | Done — Resume, rating, comment, and reaction model |
-| Resume, review, rating routes                                 | Not started                                        |
+| Piece                                                         | Status                                                     |
+| ------------------------------------------------------------- | ---------------------------------------------------------- |
+| Express app factory, CORS (credentials on), JSON body parsing | Done                                                       |
+| `GET /health`                                                 | Done                                                       |
+| Auth middleware — `requireAuth`, `optionalAuth`               | Done, verifies Supabase JWT                                |
+| `GET /api/me`, `PATCH /api/me`                                | Done — profile read/update                                 |
+| Storage buckets + RLS policies                                | Done — `supabase/storage-setup.sql`                        |
+| TypeORM DataSource against Supabase Postgres                  | Configured, connects lazily                                |
+| Entities + first migration                                    | Done — Resume, rating, comment, and reaction model         |
+| Resume create, feed, and PDF-read routes                      | Done — authenticated feed uses short-lived signed PDF URLs |
+| Rating and reaction routes                                    | Done — one per person per resume, upsert semantics         |
+| Comment routes — threads, replies, edit, delete               | Done — two-level threads, tombstones, owner moderation     |
+| Comment reactions                                             | Done — same five kinds, one per person per comment         |
 
 Key files:
 
@@ -96,9 +99,10 @@ The `/api` prefix, the bearer token and server-readable sessions are all closed 
    in `router.refresh()`. Anything reading metadata off the client session directly
    would show stale values.
 
-3. **The community interaction loop is not exposed yet.** Feed posts now load and
-   render their first PDF page from time-limited URLs, but rating, comment, and
-   reaction endpoints still need to be built.
+3. **The community interaction loop is built end to end.** Rating, reaction, and
+   comment endpoints exist and the feed consumes all of them. The comment shapes
+   are hand-mirrored between `src/types/comment.ts` and the frontend
+   `types/comment.ts`, so they drift silently — change them together.
 
 ## Settled decisions
 
@@ -132,9 +136,16 @@ The `/api` prefix, the bearer token and server-readable sessions are all closed 
   the storage RLS policy.
   - `resume_ratings` holds a 1–5 score and has one row per `(resume_id, author_id)`;
     changing a score updates that same row.
-  - `resume_comments` holds written feedback (up to 2,000 characters).
-  - `resume_reactions` holds `helpful`, `insightful`, or `encouraging`; a person may
-    use each kind once per resume.
+  - `resume_comments` holds written feedback (up to 2,000 characters). A row with
+    a `parent_id` is a reply; threads are exactly two levels deep and a trigger
+    re-parents anything deeper onto the root. Deleting a comment that has replies
+    tombstones it (`deleted_at` set, body blanked) so the replies survive; a
+    comment nobody answered is deleted outright. Tombstones are excluded from
+    `comment_count`.
+  - `resume_reactions` holds one of five kinds; a person may hold one per resume.
+  - `comment_reactions` mirrors it for comments, sharing the same
+    `reaction_kind_enum` and the same one-per-person rule. `resume_comments.reaction_count`
+    is a trigger-maintained aggregate; per-kind tallies are grouped per page at read time.
   - `resumes.average_rating`, `rating_count`, `comment_count`, and `reaction_count`
     are feed-card aggregates. Database triggers maintain them on every child-row
     insert, update, and delete; an unrated resume has `average_rating = null`.
@@ -149,9 +160,18 @@ The `/api` prefix, the bearer token and server-readable sessions are all closed 
   TypeORM migrations at backend startup; `DB_SYNCHRONIZE` now defaults to `false`.
   Set synchronization to true only for a disposable local database.
 
-- **Where does moderation live?** Public resumes are PII (names, emails, phone
-  numbers, employers). Worth deciding early whether uploads are public by default,
-  whether reviewers are anonymous, and how a resume gets taken down.
+- **Where does moderation live?** Partly settled: a resume owner can delete any
+  comment on their own post, silently, which is the escape hatch against abuse on a
+  document carrying their real name and phone number. See
+  `docs/adr/0002-resume-owners-can-delete-comments.md` for the cost of that. Still
+  open: whether uploads are public by default, whether commenters are anonymous,
+  and how a resume itself gets taken down.
+
+- **Notifications are a deliberate non-goal.** Nobody is told when their resume is
+  commented on or their comment is answered. This is the thing that would make the
+  loop actually loop, so it is the first candidate once the UI exists — but it is a
+  whole subsystem (table, read state, polling or Realtime, a surface in the header)
+  and nothing else in the product has one. It is missing on purpose, not by oversight.
 
 ## Suggested build order
 
@@ -167,7 +187,9 @@ The `/api` prefix, the bearer token and server-readable sessions are all closed 
    verifies its ownership and MIME type before creating the resume record.
 4. ~~**Feed**~~ — `GET /api/resumes` lists newest posts with ten-minute signed
    URLs; the viewer renders page one and opens the full PDF on demand.
-5. **Ratings, comments, and reactions** — the actual community loop.
+5. ~~**Ratings, comments, and reactions**~~ — done. Rating and reaction on a resume,
+   two-level comment threads with replies, editing, deletion and per-comment
+   reactions, all wired into the feed card.
 
 ## Running it locally
 
