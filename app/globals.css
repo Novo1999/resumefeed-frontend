@@ -6,6 +6,7 @@
 
 @theme inline {
   --font-heading: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --color-note: var(--note);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -72,6 +73,7 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
+  --note: oklch(0.48 0.1 248);
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -102,6 +104,7 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+  --note: oklch(0.74 0.09 248);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -128,5 +131,29 @@
     @apply font-sans;
     /* Instrument Serif has one weight; stops faux-bold on headings. */
     font-synthesis-weight: none;
+  }
+}
+
+/* Landing-page annotation reveal: the margin notes arrive after the resume they
+   point at. `both` keeps them hidden through their delay; disabling the
+   animation outright is what makes the reduced-motion case render them plain. */
+@keyframes note-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.note-in {
+  animation: note-in 560ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-in {
+    animation: none;
   }
 }

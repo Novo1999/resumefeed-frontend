@@ -20,11 +20,17 @@ export async function SiteHeader() {
 
         <nav className="flex items-center gap-2">
           {profile ? (
-            <UserMenu
-              email={profile.email}
-              fullName={profile.fullName ?? undefined}
-              avatarUrl={profile.avatarUrl ?? undefined}
-            />
+            <>
+              {/* `/` is the pitch now, so signed-in people need one click back to the feed. */}
+              <Button render={<Link href="/feed" />} nativeButton={false} variant="ghost" size="sm">
+                Feed
+              </Button>
+              <UserMenu
+                email={profile.email}
+                fullName={profile.fullName ?? undefined}
+                avatarUrl={profile.avatarUrl ?? undefined}
+              />
+            </>
           ) : (
             <>
               <Button

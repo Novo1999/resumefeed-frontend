@@ -1,33 +1,37 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { ResumeFeed } from '@/components/feed/ResumeFeed';
-import { ResumeUploadDialog } from '@/components/feed/ResumeUploadDialog';
 import { getCurrentUser } from '@/lib/supabase/server';
+import { LandingHero } from '@/components/marketing/LandingHero';
+import { WhatItReplaces } from '@/components/marketing/WhatItReplaces';
+import { HowItWorks } from '@/components/marketing/HowItWorks';
+import { FeedbackSample } from '@/components/marketing/FeedbackSample';
+import { PostingTerms } from '@/components/marketing/PostingTerms';
+import { ClosingCta } from '@/components/marketing/ClosingCta';
+import { LandingFooter } from '@/components/marketing/LandingFooter';
 
 export const metadata: Metadata = {
-  title: 'Feed — Resume Feed',
-  description: 'Resumes the community is reviewing right now.',
+  title: 'Resume Feed — Honest resume feedback from real people',
+  description:
+    'Post your resume to a public feed and get rated, marked up, and argued with by people in your field. Free, and reciprocal: post one, review one back.',
 };
 
-/** The authenticated resume feed is the app's home route. */
-export default async function HomePage() {
-  // `proxy.ts` also gates this, but a matcher change can silently drop that.
+/**
+ * Public on purpose, signed in or not — this is the page people are sent when
+ * someone recommends the product, and a signed-in visitor still needs to read
+ * the pitch to know what to tell them.
+ */
+export default async function LandingPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login?next=/');
+  const signedIn = Boolean(user);
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-12">
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="font-heading text-3xl tracking-tight">Feed</h1>
-          <p className="text-sm text-muted-foreground">
-            Resumes the community is reviewing right now.
-          </p>
-        </div>
-        <ResumeUploadDialog ownerId={user.id} />
-      </div>
-
-      <ResumeFeed />
-    </div>
+    <main className="flex-1">
+      <LandingHero signedIn={signedIn} />
+      <WhatItReplaces />
+      <HowItWorks />
+      <FeedbackSample />
+      <PostingTerms />
+      <ClosingCta signedIn={signedIn} />
+      <LandingFooter signedIn={signedIn} />
+    </main>
   );
 }
