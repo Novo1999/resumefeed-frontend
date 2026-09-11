@@ -53,7 +53,7 @@ export async function signup(values: SignupValues): Promise<AuthActionResult> {
     return { fieldErrors: toFieldErrors(parsed.error) };
   }
 
-  const { fullName, email, password } = parsed.data;
+  const { fullName, role, email, password } = parsed.data;
 
   const supabase = await createSupabaseServerClient();
 
@@ -64,7 +64,7 @@ export async function signup(values: SignupValues): Promise<AuthActionResult> {
       // A reverse proxy may expose an internal localhost host header. Always
       // send confirmation links to the configured public frontend URL instead.
       emailRedirectTo: new URL('/auth/callback', siteUrl).toString(),
-      data: { full_name: fullName },
+      data: { full_name: fullName, role: role || null },
     },
   });
 

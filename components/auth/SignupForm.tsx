@@ -8,7 +8,9 @@ import { Loader2Icon, MailCheckIcon } from 'lucide-react';
 import { signup } from '@/app/actions/auth';
 import { MIN_PASSWORD_LENGTH, signupSchema, type SignupValues } from '@/lib/auth/schemas';
 import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
+import { ROLE_OPTIONS } from '@/lib/profile/roles';
 import { Field } from './Field';
 import { FormMessage } from './FormMessage';
 import { GoogleAuthButton } from './GoogleAuthButton';
@@ -22,10 +24,12 @@ export function SignupForm() {
     register,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { fullName: '', email: '', password: '' },
+    defaultValues: { fullName: '', role: '', email: '', password: '' },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -85,6 +89,22 @@ export function SignupForm() {
           aria-describedby={errors.fullName ? 'fullName-message' : undefined}
           disabled={isSubmitting}
           {...register('fullName')}
+        />
+      </Field>
+
+      <Field
+        name="role"
+        label="Role"
+        hint="Choose a suggested role or type your own."
+        error={errors.role?.message}
+      >
+        <Combobox
+          id="role"
+          value={watch('role')}
+          onValueChange={(role) => setValue('role', role, { shouldDirty: true, shouldValidate: true })}
+          options={ROLE_OPTIONS}
+          placeholder="e.g. Software Engineer"
+          disabled={isSubmitting}
         />
       </Field>
 

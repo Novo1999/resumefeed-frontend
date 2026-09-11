@@ -22,6 +22,7 @@ export const signupSchema = z.object({
     .trim()
     .min(2, 'That name looks too short.')
     .max(80, 'That name is too long.'),
+  role: z.string().trim().max(100, 'Role must be 100 characters or fewer.'),
   email: emailField,
   password: z.string().min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters.`),
 });
